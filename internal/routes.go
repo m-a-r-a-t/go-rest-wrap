@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"go_http_test/pkg/router"
+	"github.com/m-a-r-a-t/go-rest-wrap/pkg/router"
 )
 
 var R router.Router

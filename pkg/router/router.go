@@ -3,8 +3,8 @@ package router
 import (
 	"encoding/json"
 	"fmt"
-	"go_http_test/pkg/errors"
-	"go_http_test/pkg/middleware"
+	"github.com/m-a-r-a-t/go-rest-wrap/pkg/errors"
+	"github.com/m-a-r-a-t/go-rest-wrap/pkg/middleware"
 	"io/ioutil"
 	"net/http"
 

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	server "go_http_test/internal"
-	_ "go_http_test/internal/controllers/user"
+	server "github.com/m-a-r-a-t/go-rest-wrap/internal"
+	_ "github.com/m-a-r-a-t/go-rest-wrap/internal/controllers/user"
 	"log"
 	"net/http"
 )

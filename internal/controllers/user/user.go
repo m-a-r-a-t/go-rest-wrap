@@ -2,8 +2,8 @@ package user
 
 import (
 	"fmt"
-	routes "go_http_test/internal"
-	"go_http_test/pkg/router"
+	routes "github.com/m-a-r-a-t/go-rest-wrap/internal"
+	"github.com/m-a-r-a-t/go-rest-wrap/pkg/router"
 )
 
 type Person struct {
