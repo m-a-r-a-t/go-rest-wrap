@@ -1,4 +1,4 @@
-module go_http_test
+module go-rest-wrap
 
 go 1.18
 
