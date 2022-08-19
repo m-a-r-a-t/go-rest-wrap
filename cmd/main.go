@@ -1,57 +1,57 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"go_http_test/pkg/middleware"
-	"go_http_test/pkg/router"
+	server "go_http_test/internal"
+	_ "go_http_test/internal/controllers/user"
 	"log"
 	"net/http"
 )
 
 type Person struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-	City string `json:"city"`
+	Name *string `json:"name,omitempty" validate:"required" schema:"name"`
+	Age  *int    `json:"age,omitempty" validate:"required" schema:"age"`
+	City *string `json:"city,omitempty" validate:"required" schema:"city"`
+}
+
+func NewPerson() interface{} {
+	return &Person{}
 }
 
 func main() {
-	router := router.NewRouter()
 
-	data := map[string]interface{}{}
-	data["1"] = 5
-	data["2"] = "Hello world"
 	// mux.HandleFunc("/", )
+	// ! Middlewares: middleware.New(loggerMiddleware, helloMiddleware),
+	//!======================================================================
+	// r.POST("/home", router.Params{
+	// 	StructureForValidateQueryDataCreator: NewPerson},
+	// 	func(ctx router.HandlerCtx) (router.MyResponse, error) {
 
-	router.POST("/home", middleware.New(loggerMiddleware, helloMiddleware).Then(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("This is post")
-		w.Write([]byte("This is post"))
-	}))
+	// 		a := (*ctx.Structure).(*Person)
+	// 		fmt.Println("Structure from post", *(a.Name))
+	// 		// fmt.Println("Structure from post", a.Age)
 
-	router.POST("/hello", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("This is hello post"))
-	})
+	// 		return router.MyResponse{Body: a}, nil
+	// 	})
 
-	router.GET("/home", func(w http.ResponseWriter, r *http.Request) {
+	// r.GET("/hello", router.Params{StructureForValidateQueryDataCreator: NewPerson},
+	// 	func(ctx router.HandlerCtx) (router.MyResponse, error) {
+	// 		p := (*ctx.Structure).(*Person)
+	// 		fmt.Println(*p.Name)
+	// 		return router.MyResponse{Body: p}, nil
+	// 	})
+	//!===================================================
+	// r.GET("/home", router.Params{}, func(w http.ResponseWriter, r *http.Request) (router.MyResponse, error) {
+	// 	//! реализовать передачу валидированных данных сразу в  контексте
+	// 	fmt.Println("Hello")
+	// 	person := Person{Name: "Marat", Age: 20}
 
-		fmt.Println("Hello")
-		person := Person{Name: "Marat", Age: 20}
+	// 	return router.MyResponse{Body: person}, nil
 
-		bytes, err := json.Marshal(person)
-		if err != nil {
-			fmt.Println(err)
-			w.Write([]byte("Error"))
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
+	// })
 
-		// w.Header().Add("Content-Type", "application/text")
-		w.Write(bytes)
-
-	})
 	log.Println("Server starting on port: 8000")
-	err := http.ListenAndServe(":8000", &router.Mux)
+	err := http.ListenAndServe(":8000", &server.R.Mux)
 	log.Fatal(err)
 
 }
