@@ -1,4 +1,4 @@
-module go-rest-wrap
+module github.com/m-a-r-a-t/go-rest-wrap
 
 go 1.18
 
