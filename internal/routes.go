@@ -7,6 +7,6 @@ import (
 var R router.Router
 
 func init() {
-	R = router.NewRouter("/api")
+	R = router.NewRouter("/api", []string{})
 
 }

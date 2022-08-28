@@ -3,10 +3,11 @@ package router
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/m-a-r-a-t/go-rest-wrap/pkg/errors"
-	"github.com/m-a-r-a-t/go-rest-wrap/pkg/middleware"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/m-a-r-a-t/go-rest-wrap/pkg/errors"
+	"github.com/m-a-r-a-t/go-rest-wrap/pkg/middleware"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/schema"
@@ -16,6 +17,7 @@ type Router struct {
 	BasePath    string
 	Mux         http.ServeMux
 	handleFuncs map[string]*Funcs
+	Whitelist   []string
 }
 
 type Funcs struct {
@@ -23,11 +25,12 @@ type Funcs struct {
 	post http.HandlerFunc
 }
 
-func NewRouter(basePath string) Router {
+func NewRouter(basePath string, whiteList []string) Router {
 	return Router{
 		BasePath:    basePath,
 		Mux:         *http.NewServeMux(),
 		handleFuncs: map[string]*Funcs{},
+		Whitelist:   whiteList,
 	}
 }
 
@@ -62,7 +65,7 @@ func (r *Router) GET(path string, params Params, fn MyHandleFunc) {
 		r.createHandleFunc(path)
 	}
 
-	r.handleFuncs[path].get = GlobalHandler(fn, params)
+	r.handleFuncs[path].get = r.GlobalHandler(fn, params)
 
 }
 
@@ -72,7 +75,7 @@ func (r *Router) POST(path string, params Params, fn MyHandleFunc) {
 		r.createHandleFunc(path)
 	}
 
-	r.handleFuncs[path].post = GlobalHandler(fn, params)
+	r.handleFuncs[path].post = r.GlobalHandler(fn, params)
 }
 
 // type IResponse interface{
@@ -94,7 +97,7 @@ type Result struct {
 	Headers map[string]string
 }
 
-func GlobalHandler(fn MyHandleFunc,
+func (rr *Router) GlobalHandler(fn MyHandleFunc,
 	params Params,
 	//  structure T
 ) http.HandlerFunc {
@@ -108,6 +111,15 @@ func GlobalHandler(fn MyHandleFunc,
 		var result Result
 
 		w.Header().Add("Content-Type", "application/json")
+		if len(rr.Whitelist) == 0 {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+		} else {
+			for _, v := range rr.Whitelist {
+				if v == r.RemoteAddr {
+					w.Header().Set("Access-Control-Allow-Origin", r.RemoteAddr)
+				}
+			}
+		}
 
 		// fmt.Println("Authorization", r.Header.Get("Authorization"))
 		switch r.Method {
